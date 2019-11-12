@@ -21,12 +21,42 @@ namespace Amyntas__YT_Downloader
         public Form1()
         {
             InitializeComponent();
+
+            try
+            {
+                foreach (var line in System.IO.File.ReadAllLines("savedPresets.txt"))
+                {
+                    checklistSavepresets.Items.Add(line);
+                }
+            }
+            catch
+            {
+
+            }
         }
 
 
         //CUSTOM FUNCTIONS
 
+        private void RewriteSavefile()
+        {
+            try
+            {
+                File.Delete("savedPresets.txt");
+            }
+            catch
+            { }
 
+            const string sPath = "savedPresets.txt";
+            System.IO.StreamWriter SaveFile = new System.IO.StreamWriter(sPath);
+            foreach (var item in checklistSavepresets.Items)
+            {
+                SaveFile.WriteLine(item);
+            }
+
+            SaveFile.Close();
+        }
+        
 
         //EVENT FUNCTIONS
         private void Form1_Load(object sender, EventArgs e)
@@ -91,6 +121,7 @@ namespace Amyntas__YT_Downloader
 
         private void btnPresetAdd_Click(object sender, EventArgs e)
         {
+            lblError.Text = "";
             if (txtPresetPath.Text != "")
             {
                 checklistSavepresets.Items.Add(txtPresetPath.Text);
@@ -101,6 +132,7 @@ namespace Amyntas__YT_Downloader
                 txtPresetPath.BackColor = Color.FromArgb(255, 130, 90, 90);
                 lblError.Text = "No preset path entered!";
             }
+            RewriteSavefile();
         }
 
         private void txtPresetPath_Click(object sender, EventArgs e)
@@ -122,6 +154,11 @@ namespace Amyntas__YT_Downloader
         private async void btnDownloadAudio_Click(object sender, EventArgs e)
         {
             lblError.Text = "";
+            if (checklistSavepresets.SelectedItem == null && checkSaveUsepreset.Checked)
+            {
+                lblError.Text = "You need to either choose one of the presets, or choose to leave the file in this program's folder!";
+                return;
+            }
             if (txtURL.Text == "")
             {
                 txtURL.BackColor = Color.FromArgb(255, 130, 90, 90);
@@ -201,6 +238,10 @@ namespace Amyntas__YT_Downloader
                     return;
                 }
                 
+            }
+            else
+            {
+                checkSaveInprogramfolder.Checked = true;
             }
             
         }

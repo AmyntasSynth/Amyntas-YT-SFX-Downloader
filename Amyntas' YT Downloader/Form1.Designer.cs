@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabDownloader = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
@@ -35,7 +36,6 @@
             this.btnDownloadAudio = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.txtURL = new System.Windows.Forms.TextBox();
-            this.checklistSavepresets = new System.Windows.Forms.CheckedListBox();
             this.checkSaveUsepreset = new System.Windows.Forms.CheckBox();
             this.btnPresetAdd = new System.Windows.Forms.Button();
             this.txtPresetPath = new System.Windows.Forms.TextBox();
@@ -47,6 +47,9 @@
             this.txtCustomfilename = new System.Windows.Forms.TextBox();
             this.lblError = new System.Windows.Forms.Label();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.checklistSavepresets = new System.Windows.Forms.ListBox();
+            this.splitter1 = new System.Windows.Forms.Splitter();
+            this.splitter2 = new System.Windows.Forms.Splitter();
             this.tabControl1.SuspendLayout();
             this.tabDownloader.SuspendLayout();
             this.SuspendLayout();
@@ -63,6 +66,8 @@
             // tabDownloader
             // 
             this.tabDownloader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.tabDownloader.Controls.Add(this.splitter2);
+            this.tabDownloader.Controls.Add(this.checklistSavepresets);
             this.tabDownloader.Controls.Add(this.lblError);
             this.tabDownloader.Controls.Add(this.txtCustomfilename);
             this.tabDownloader.Controls.Add(this.checkNamecustom);
@@ -73,12 +78,12 @@
             this.tabDownloader.Controls.Add(this.txtPresetPath);
             this.tabDownloader.Controls.Add(this.btnPresetAdd);
             this.tabDownloader.Controls.Add(this.checkSaveUsepreset);
-            this.tabDownloader.Controls.Add(this.checklistSavepresets);
             this.tabDownloader.Controls.Add(this.txtURL);
             this.tabDownloader.Controls.Add(this.label2);
             this.tabDownloader.Controls.Add(this.label1);
             this.tabDownloader.Controls.Add(this.checkSaveInprogramfolder);
             this.tabDownloader.Controls.Add(this.btnDownloadAudio);
+            this.tabDownloader.Controls.Add(this.splitter1);
             this.tabDownloader.ForeColor = System.Drawing.Color.Violet;
             this.tabDownloader.Location = new System.Drawing.Point(4, 22);
             this.tabDownloader.Name = "tabDownloader";
@@ -93,7 +98,7 @@
             this.label2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.Violet;
-            this.label2.Location = new System.Drawing.Point(294, 1);
+            this.label2.Location = new System.Drawing.Point(213, 2);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(93, 13);
             this.label2.TabIndex = 13;
@@ -106,7 +111,7 @@
             this.checkSaveInprogramfolder.Checked = true;
             this.checkSaveInprogramfolder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkSaveInprogramfolder.ForeColor = System.Drawing.Color.Violet;
-            this.checkSaveInprogramfolder.Location = new System.Drawing.Point(297, 17);
+            this.checkSaveInprogramfolder.Location = new System.Drawing.Point(213, 18);
             this.checkSaveInprogramfolder.Name = "checkSaveInprogramfolder";
             this.checkSaveInprogramfolder.Size = new System.Drawing.Size(158, 17);
             this.checkSaveInprogramfolder.TabIndex = 12;
@@ -144,21 +149,10 @@
             this.txtURL.ForeColor = System.Drawing.Color.Violet;
             this.txtURL.Location = new System.Drawing.Point(43, 6);
             this.txtURL.Name = "txtURL";
-            this.txtURL.Size = new System.Drawing.Size(157, 20);
+            this.txtURL.Size = new System.Drawing.Size(155, 20);
             this.txtURL.TabIndex = 9;
             this.txtURL.Click += new System.EventHandler(this.txtURL_Click);
             this.txtURL.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtURL_MouseDown);
-            // 
-            // checklistSavepresets
-            // 
-            this.checklistSavepresets.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.checklistSavepresets.Enabled = false;
-            this.checklistSavepresets.ForeColor = System.Drawing.Color.Violet;
-            this.checklistSavepresets.FormattingEnabled = true;
-            this.checklistSavepresets.Location = new System.Drawing.Point(297, 59);
-            this.checklistSavepresets.Name = "checklistSavepresets";
-            this.checklistSavepresets.Size = new System.Drawing.Size(277, 229);
-            this.checklistSavepresets.TabIndex = 15;
             // 
             // checkSaveUsepreset
             // 
@@ -166,7 +160,7 @@
             this.checkSaveUsepreset.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.checkSaveUsepreset.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.checkSaveUsepreset.ForeColor = System.Drawing.Color.Violet;
-            this.checkSaveUsepreset.Location = new System.Drawing.Point(297, 37);
+            this.checkSaveUsepreset.Location = new System.Drawing.Point(213, 38);
             this.checkSaveUsepreset.Name = "checkSaveUsepreset";
             this.checkSaveUsepreset.Size = new System.Drawing.Size(146, 17);
             this.checkSaveUsepreset.TabIndex = 16;
@@ -190,9 +184,9 @@
             // 
             this.txtPresetPath.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.txtPresetPath.ForeColor = System.Drawing.Color.Violet;
-            this.txtPresetPath.Location = new System.Drawing.Point(297, 318);
+            this.txtPresetPath.Location = new System.Drawing.Point(213, 318);
             this.txtPresetPath.Name = "txtPresetPath";
-            this.txtPresetPath.Size = new System.Drawing.Size(184, 20);
+            this.txtPresetPath.Size = new System.Drawing.Size(266, 20);
             this.txtPresetPath.TabIndex = 19;
             this.txtPresetPath.Click += new System.EventHandler(this.txtPresetPath_Click);
             // 
@@ -214,7 +208,7 @@
             this.label4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.Violet;
-            this.label4.Location = new System.Drawing.Point(294, 299);
+            this.label4.Location = new System.Drawing.Point(213, 303);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(65, 13);
             this.label4.TabIndex = 22;
@@ -268,7 +262,7 @@
             this.txtCustomfilename.ForeColor = System.Drawing.Color.Violet;
             this.txtCustomfilename.Location = new System.Drawing.Point(8, 91);
             this.txtCustomfilename.Name = "txtCustomfilename";
-            this.txtCustomfilename.Size = new System.Drawing.Size(192, 20);
+            this.txtCustomfilename.Size = new System.Drawing.Size(190, 20);
             this.txtCustomfilename.TabIndex = 26;
             this.txtCustomfilename.Click += new System.EventHandler(this.txtCustomfilename_Click);
             // 
@@ -276,14 +270,44 @@
             // 
             this.lblError.AutoEllipsis = true;
             this.lblError.ForeColor = System.Drawing.Color.LightCoral;
-            this.lblError.Location = new System.Drawing.Point(8, 128);
+            this.lblError.Location = new System.Drawing.Point(8, 114);
             this.lblError.Name = "lblError";
-            this.lblError.Size = new System.Drawing.Size(283, 163);
+            this.lblError.Size = new System.Drawing.Size(192, 172);
             this.lblError.TabIndex = 27;
             // 
             // saveFileDialog
             // 
             this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
+            // 
+            // checklistSavepresets
+            // 
+            this.checklistSavepresets.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(80)))), ((int)(((byte)(80)))));
+            this.checklistSavepresets.Enabled = false;
+            this.checklistSavepresets.ForeColor = System.Drawing.Color.Violet;
+            this.checklistSavepresets.FormattingEnabled = true;
+            this.checklistSavepresets.Location = new System.Drawing.Point(213, 61);
+            this.checklistSavepresets.Name = "checklistSavepresets";
+            this.checklistSavepresets.Size = new System.Drawing.Size(359, 225);
+            this.checklistSavepresets.TabIndex = 28;
+            // 
+            // splitter1
+            // 
+            this.splitter1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.splitter1.Location = new System.Drawing.Point(3, 3);
+            this.splitter1.MinimumSize = new System.Drawing.Size(1, 0);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(202, 337);
+            this.splitter1.TabIndex = 29;
+            this.splitter1.TabStop = false;
+            // 
+            // splitter2
+            // 
+            this.splitter2.BackColor = System.Drawing.Color.White;
+            this.splitter2.Location = new System.Drawing.Point(205, 3);
+            this.splitter2.Name = "splitter2";
+            this.splitter2.Size = new System.Drawing.Size(2, 337);
+            this.splitter2.TabIndex = 30;
+            this.splitter2.TabStop = false;
             // 
             // Form1
             // 
@@ -292,6 +316,7 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(588, 368);
             this.Controls.Add(this.tabControl1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "Amyntas\' YT SFX Downloader";
@@ -312,7 +337,6 @@
         private System.Windows.Forms.TextBox txtPresetPath;
         private System.Windows.Forms.Button btnPresetAdd;
         private System.Windows.Forms.CheckBox checkSaveUsepreset;
-        private System.Windows.Forms.CheckedListBox checklistSavepresets;
         private System.Windows.Forms.TextBox txtURL;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
@@ -325,6 +349,9 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lblError;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
+        private System.Windows.Forms.ListBox checklistSavepresets;
+        private System.Windows.Forms.Splitter splitter1;
+        private System.Windows.Forms.Splitter splitter2;
     }
 }
 
