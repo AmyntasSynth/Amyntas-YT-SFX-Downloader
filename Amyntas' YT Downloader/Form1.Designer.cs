@@ -108,8 +108,6 @@
             // 
             this.checkSaveInprogramfolder.AutoSize = true;
             this.checkSaveInprogramfolder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.checkSaveInprogramfolder.Checked = true;
-            this.checkSaveInprogramfolder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkSaveInprogramfolder.ForeColor = System.Drawing.Color.Violet;
             this.checkSaveInprogramfolder.Location = new System.Drawing.Point(213, 18);
             this.checkSaveInprogramfolder.Name = "checkSaveInprogramfolder";
@@ -158,6 +156,8 @@
             // 
             this.checkSaveUsepreset.AutoSize = true;
             this.checkSaveUsepreset.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.checkSaveUsepreset.Checked = true;
+            this.checkSaveUsepreset.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkSaveUsepreset.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.checkSaveUsepreset.ForeColor = System.Drawing.Color.Violet;
             this.checkSaveUsepreset.Location = new System.Drawing.Point(213, 38);
@@ -282,7 +282,6 @@
             // checklistSavepresets
             // 
             this.checklistSavepresets.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(80)))), ((int)(((byte)(80)))));
-            this.checklistSavepresets.Enabled = false;
             this.checklistSavepresets.ForeColor = System.Drawing.Color.Violet;
             this.checklistSavepresets.FormattingEnabled = true;
             this.checklistSavepresets.Location = new System.Drawing.Point(213, 61);
@@ -316,6 +315,7 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(588, 368);
             this.Controls.Add(this.tabControl1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
