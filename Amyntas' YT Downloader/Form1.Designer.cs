@@ -50,6 +50,7 @@
             this.checklistSavepresets = new System.Windows.Forms.ListBox();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.splitter2 = new System.Windows.Forms.Splitter();
+            this.btnPaste = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabDownloader.SuspendLayout();
             this.SuspendLayout();
@@ -66,6 +67,7 @@
             // tabDownloader
             // 
             this.tabDownloader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.tabDownloader.Controls.Add(this.btnPaste);
             this.tabDownloader.Controls.Add(this.splitter2);
             this.tabDownloader.Controls.Add(this.checklistSavepresets);
             this.tabDownloader.Controls.Add(this.lblError);
@@ -308,6 +310,18 @@
             this.splitter2.TabIndex = 30;
             this.splitter2.TabStop = false;
             // 
+            // btnPaste
+            // 
+            this.btnPaste.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnPaste.ForeColor = System.Drawing.Color.Violet;
+            this.btnPaste.Location = new System.Drawing.Point(143, 28);
+            this.btnPaste.Name = "btnPaste";
+            this.btnPaste.Size = new System.Drawing.Size(55, 23);
+            this.btnPaste.TabIndex = 31;
+            this.btnPaste.Text = "^ Paste";
+            this.btnPaste.UseVisualStyleBackColor = false;
+            this.btnPaste.Click += new System.EventHandler(this.btnPaste_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -352,6 +366,7 @@
         private System.Windows.Forms.ListBox checklistSavepresets;
         private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.Splitter splitter2;
+        private System.Windows.Forms.Button btnPaste;
     }
 }
 

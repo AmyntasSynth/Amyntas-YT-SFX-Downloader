@@ -260,5 +260,22 @@ namespace Amyntas__YT_Downloader
         {
 
         }
+
+        private void btnPaste_Click(object sender, EventArgs e)
+        {
+            lblError.Text = "";
+            try
+            {
+                txtURL.Text = Clipboard.GetText();
+            }
+            catch (Exception error)
+            {
+                lblError.Text = "There's nothing useful in your clipboard to paste!\n\n" + error;
+            }
+            if (txtURL.Text == "")
+            {
+                lblError.Text = "There's nothing useful in your clipboard to paste!\n\n";
+            }
+        }
     }
 }
