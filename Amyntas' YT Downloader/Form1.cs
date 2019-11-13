@@ -164,86 +164,93 @@ namespace Amyntas__YT_Downloader
 
             }
 
-            string cache = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\AmyYT-config.txt");
             try
             {
-                if (cache[0] == 'W')
+                string cache = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\AmyYT-config.txt");
+                try
+                {
+                    if (cache[0] == 'W')
+                    {
+                        configUIcolor = Color.White;
+                    }
+                    if (cache[0] == 'S')
+                    {
+                        configUIcolor = Color.Salmon;
+                    }
+                    if (cache[0] == 'O')
+                    {
+                        configUIcolor = Color.Orange;
+                    }
+                    if (cache[0] == 'Y')
+                    {
+                        configUIcolor = Color.Yellow;
+                    }
+                    if (cache[0] == 'L')
+                    {
+                        configUIcolor = Color.LimeGreen;
+                    }
+                    if (cache[0] == 'G')
+                    {
+                        configUIcolor = Color.SpringGreen;
+                    }
+                    if (cache[0] == 'B')
+                    {
+                        configUIcolor = Color.LightBlue;
+                    }
+                    if (cache[0] == 'C')
+                    {
+                        configUIcolor = Color.CornflowerBlue;
+                    }
+                    if (cache[0] == 'P')
+                    {
+                        configUIcolor = Color.MediumPurple;
+                    }
+                    if (cache[0] == 'V')
+                    {
+                        configUIcolor = Color.Violet;
+                    }
+                }
+                catch
                 {
                     configUIcolor = Color.White;
                 }
-                if (cache[0] == 'S')
+
+                try
                 {
-                    configUIcolor = Color.Salmon;
+                    if (cache[1] == '1')
+                    {
+                        checkNameoriginal.Checked = true;
+                    }
+                    if (cache[1] == '2')
+                    {
+                        checkNamecustom.Checked = true;
+                    }
                 }
-                if (cache[0] == 'O')
+                catch
                 {
-                    configUIcolor = Color.Orange;
+                    checkNameoriginal.Checked = true;
                 }
-                if (cache[0] == 'Y')
+
+                try
                 {
-                    configUIcolor = Color.Yellow;
+                    if (cache[2] == '1')
+                    {
+                        checkSaveInprogramfolder.Checked = true;
+                    }
+                    if (cache[2] == '2')
+                    {
+                        checkSaveUsepreset.Checked = true;
+                    }
                 }
-                if (cache[0] == 'L')
+                catch
                 {
-                    configUIcolor = Color.LimeGreen;
-                }
-                if (cache[0] == 'G')
-                {
-                    configUIcolor = Color.SpringGreen;
-                }
-                if (cache[0] == 'B')
-                {
-                    configUIcolor = Color.LightBlue;
-                }
-                if (cache[0] == 'C')
-                {
-                    configUIcolor = Color.CornflowerBlue;
-                }
-                if (cache[0] == 'P')
-                {
-                    configUIcolor = Color.MediumPurple;
-                }
-                if (cache[0] == 'V')
-                {
-                    configUIcolor = Color.Violet;
+                    checkSaveInprogramfolder.Checked = true;
                 }
             }
             catch
             {
                 configUIcolor = Color.White;
-            }
-
-            try
-            {
-                if (cache[1] == '1')
-                {
-                    checkNameoriginal.Checked = true;
-                }
-                if (cache[1] == '2')
-                {
-                    checkNamecustom.Checked = true;
-                }
-            }
-            catch
-            {
-                checkNameoriginal.Checked = true;
-            }
-
-            try
-            {
-                if (cache[2] == '1')
-                {
-                    checkSaveInprogramfolder.Checked = true;
-                }
-                if (cache[2] == '2')
-                {
-                    checkSaveUsepreset.Checked = true;
-                }
-            }
-            catch
-            {
-                checkSaveInprogramfolder.Checked = true;
-            }
+            }  
 
             RecolorUI(configUIcolor);
         }
