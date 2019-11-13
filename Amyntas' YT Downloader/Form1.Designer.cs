@@ -457,7 +457,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "Amyntas\' YT SFX Downloader";
+            this.Text = "Amyntas\' YT SFX Downloader -- 1.1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabDownloader.ResumeLayout(false);
