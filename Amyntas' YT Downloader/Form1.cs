@@ -8,6 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using NAudio;
+using NAudio.Wave;
+using CSCore;
+using CSCore.MediaFoundation;
+using OggVorbisEncoder;
+using System.Threading;
 
 namespace Amyntas__YT_Downloader
 {
@@ -19,6 +25,16 @@ namespace Amyntas__YT_Downloader
         Color configUIcolor;
         int configNameoption = 0;
         int configPresetoption = 0;
+        private const int SampleSize = 1024;
+        string ConvTitle;
+        bool progBarVisible = false;
+        string errortext = "";
+        bool progBarWEE = true;
+        int progBarValue = 0;
+        int progBarMax = 100;
+        bool ConvUsespreset = false;
+        string Filepath;
+        string configFormatoption = "0";
 
 
         //----------------
@@ -27,6 +43,7 @@ namespace Amyntas__YT_Downloader
         // 0. configUIcolor [W=white, S=salmon, O=orange, Y=yellow, L=limegreen, G=springgreen, B=lightblue, C=cornflowerblue, P=mediumpurple, V=violet]
         // 1. configNameoption [0=none, 1=originalYT-Name, 2=customYT-name]
         // 2. configPresetoption [0=none, 1=save in program folder, 2=use preset]
+        // 3. configFormatoption [0=none, 1=mp3, 2=wav, 3=ogg]
 
 
         //----------------
@@ -120,11 +137,13 @@ namespace Amyntas__YT_Downloader
 
             SaveFile.Write(configNameoption.ToString());
             SaveFile.Write(configPresetoption.ToString());
+            SaveFile.Write(configFormatoption);
 
             SaveFile.Close();
         }
 
         // Used to recolor UI to what the user chooses / is saved in the config
+        // Add new UI-elements here!
         private void RecolorUI(Color Col)
         {
             label1.ForeColor = Col;
@@ -143,7 +162,124 @@ namespace Amyntas__YT_Downloader
             txtPresetPath.ForeColor = Col;
             btnPresetRemove.ForeColor = Col;
             btnPresetAdd.ForeColor = Col;
+            checkFormatMP3.ForeColor = Col;
+            checkFormatWAV.ForeColor = Col;
+            checkFormatOGG.ForeColor = Col;
         }
+
+        // OGG-Conversion
+        private void OGGConversion()
+        {
+            progBarVisible = true;
+            try
+            {
+                FileStream stdin;
+                FileStream stdout;
+                if (!ConvUsespreset)
+                {
+                    stdin = new FileStream(ConvTitle + ".wav", FileMode.Open, FileAccess.Read);
+                    stdout = new FileStream(ConvTitle + ".ogg", FileMode.Create, FileAccess.Write);
+                }
+                else
+                {
+                    stdin = new FileStream(Filepath + "\\" + ConvTitle + ".wav", FileMode.Open, FileAccess.Read);
+                    stdout = new FileStream(Filepath + "\\" + ConvTitle + ".ogg", FileMode.Create, FileAccess.Write);
+                }
+
+                var info = VorbisInfo.InitVariableBitRate(2, 48000, 0.1f);
+
+                var serial = new Random().Next();
+                var oggStream = new OggStream(serial);
+
+                var headerBuilder = new HeaderPacketBuilder();
+
+                var comments = new Comments();
+                comments.AddTag("ARTIST", "");
+
+                var infoPacket = headerBuilder.BuildInfoPacket(info);
+                var commentsPacket = headerBuilder.BuildCommentsPacket(comments);
+                var booksPacket = headerBuilder.BuildBooksPacket(info);
+
+                oggStream.PacketIn(infoPacket);
+                oggStream.PacketIn(commentsPacket);
+                oggStream.PacketIn(booksPacket);
+
+                OggPage page;
+                while (oggStream.PageOut(out page, true))
+                {
+                    stdout.Write(page.Header, 0, page.Header.Length);
+                    stdout.Write(page.Body, 0, page.Body.Length);
+                }
+
+                var processingState = ProcessingState.Create(info);
+
+                var buffer = new float[info.Channels][];
+                buffer[0] = new float[SampleSize];
+                buffer[1] = new float[SampleSize];
+
+                var readbuffer = new byte[SampleSize * 4];
+                while (!oggStream.Finished)
+                {
+                    var bytes = stdin.Read(readbuffer, 0, readbuffer.Length);
+
+                    if (bytes == 0)
+                    {
+                        processingState.WriteEndOfStream();
+                    }
+                    else
+                    {
+                        var samples = bytes / 4;
+
+                        progBarMax = samples;
+                        progBarWEE = false;
+
+                        for (var i = 0; i < samples; i++)
+                        {
+                            // uninterleave samples
+                            buffer[0][i] = (short)((readbuffer[i * 4 + 1] << 8) | (0x00ff & readbuffer[i * 4])) / 32768f;
+                            buffer[1][i] = (short)((readbuffer[i * 4 + 3] << 8) | (0x00ff & readbuffer[i * 4 + 2])) / 32768f;
+                            progBarValue = i;
+                        }
+                        progBarWEE = true;
+
+                        processingState.WriteData(buffer, samples);
+                    }
+
+                    OggPacket packet;
+                    while (!oggStream.Finished
+                           && processingState.PacketOut(out packet))
+                    {
+                        oggStream.PacketIn(packet);
+
+                        while (!oggStream.Finished
+                               && oggStream.PageOut(out page, false))
+                        {
+                            stdout.Write(page.Header, 0, page.Header.Length);
+                            stdout.Write(page.Body, 0, page.Body.Length);
+                        }
+                    }
+                }
+
+                stdin.Close();
+                stdout.Close();
+                if (!ConvUsespreset)
+                {
+                    File.Delete(ConvTitle + ".wav");
+                }
+                else
+                {
+                    File.Delete(Filepath + "\\" + ConvTitle + ".wav");
+                }
+            }
+            catch (Exception error)
+            {
+                errortext = Convert.ToString(error);
+            }
+
+            progBarVisible = false;
+            Thread.CurrentThread.Abort();
+        }
+
 
         //----------------
         //EVENT FUNCTIONS
@@ -246,6 +382,26 @@ namespace Amyntas__YT_Downloader
                 {
                     checkSaveInprogramfolder.Checked = true;
                 }
+
+                try
+                {
+                    if (cache[3] == '1')
+                    {
+                        checkFormatMP3.Checked = true;
+                    }
+                    else if (cache[3] == '2')
+                    {
+                        checkFormatWAV.Checked = true;
+                    }
+                    else if (cache[3] == '3')
+                    {
+                        checkFormatOGG.Checked = true;
+                    }
+                }
+                catch
+                {
+                    checkFormatMP3.Checked = true;
+                }
             }
             catch
             {
@@ -256,9 +412,11 @@ namespace Amyntas__YT_Downloader
         }
 
         // Clears URL Textbox
+        // Returns normal BackColor to element
         private void txtURL_MouseDown(object sender, MouseEventArgs e)
         {
             txtURL.Text = "";
+            txtURL.BackColor = Color.FromArgb(255, 90, 90, 90);
         }
 
         // Enforces only one active checkbox
@@ -362,6 +520,11 @@ namespace Amyntas__YT_Downloader
                 lblError.Text = "You need to either choose one of the presets, or choose to leave the file in this program's folder!";
                 return;
             }
+            if (!checkFormatMP3.Checked && !checkFormatWAV.Checked && !checkFormatOGG.Checked)
+            {
+                lblError.Text = "Please choose a format for the audio file!";
+                return;
+            }
             if (txtURL.Text == "")
             {
                 txtURL.BackColor = Color.FromArgb(255, 130, 90, 90);
@@ -380,7 +543,7 @@ namespace Amyntas__YT_Downloader
                 return;
             }
 
-            progressBarDownload.Visible = true;
+            progBarVisible = true;
             var client = new YoutubeExplode.YoutubeClient();
             YoutubeExplode.Models.MediaStreams.MediaStreamInfoSet streamInfoSet;
             YoutubeExplode.Models.MediaStreams.AudioStreamInfo streamInfo;
@@ -394,7 +557,7 @@ namespace Amyntas__YT_Downloader
             catch (Exception error)
             {
                 lblError.Text = "There's a problem with receiving the data!\nPlease make sure that you have a working connection\nand have entered correct values.\n\n"+error;
-                progressBarDownload.Visible = false;
+                progBarVisible = false;
                 return;
             }
             
@@ -413,7 +576,7 @@ namespace Amyntas__YT_Downloader
                 {
                     txtCustomfilename.BackColor = Color.FromArgb(255, 130, 90, 90);
                     lblError.Text = "No file name entered!";
-                    progressBarDownload.Visible = false;
+                    progBarVisible = false;
                     return;
                 }
             }
@@ -425,13 +588,47 @@ namespace Amyntas__YT_Downloader
             catch (Exception error)
             {
                 lblError.Text = "There's a problem with the download!\nPlease make sure that you have a working connection\nand that you're not spamming the button too much.\n\n"+error;
-                progressBarDownload.Visible = false;
+                progBarVisible = false;
                 return;
             }
             
             if (checkSaveInprogramfolder.Checked)
             {
-                progressBarDownload.Visible = false;
+                if (checkFormatMP3.Checked)
+                {
+                    progBarVisible = false;
+                    return;
+                }
+                else if (checkFormatWAV.Checked)
+                {
+                    using (MediaFoundationReader mp3 = new MediaFoundationReader(title+".mp3"))
+                    {
+                        using (WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(mp3))
+                        {
+                            WaveFileWriter.CreateWaveFile(title+".wav", pcm);
+                        }
+                    }
+                    File.Delete(title + ".mp3");
+                }
+                else if (checkFormatOGG.Checked)
+                {
+                    
+                    using (MediaFoundationReader mp3 = new MediaFoundationReader(title + ".mp3"))
+                    {
+                        using (WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(mp3))
+                        {
+                            WaveFileWriter.CreateWaveFile(title + ".wav", pcm);
+                        }
+                    }
+
+                    ConvUsespreset = false;
+                    ConvTitle = title;
+                    Thread OGGconversionThread = new Thread(OGGConversion);
+                    OGGconversionThread.Start();
+
+                   
+                }
+                progBarVisible = false;
                 return;
             }
             else if (checkSaveUsepreset.Checked)
@@ -443,16 +640,56 @@ namespace Amyntas__YT_Downloader
                 catch (Exception error)
                 {
                     lblError.Text = "Couldn't move the file to the specified path!\nHave you entered the path correctly?\nFile was saved in this program's folder instead.\n\n"+error;
-                    progressBarDownload.Visible = false;
+                    progBarVisible = false;
                     return;
                 }
-                
+
+                if (checkFormatMP3.Checked)
+                {
+                    progBarVisible = false;
+                    return;
+                }
+                else if (checkFormatWAV.Checked)
+                {
+                    using (MediaFoundationReader mp3 = new MediaFoundationReader(Convert.ToString(checklistSavepresets.SelectedItem) + "\\" + title + ".mp3"))
+                    {
+                        using (WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(mp3))
+                        {
+                            WaveFileWriter.CreateWaveFile(Convert.ToString(checklistSavepresets.SelectedItem) + "\\" + title + ".wav", pcm);
+                        }
+                    }
+                    File.Delete(Convert.ToString(checklistSavepresets.SelectedItem) + "\\" + title + ".mp3");
+                }
+                else if (checkFormatOGG.Checked)
+                {
+
+                    using (MediaFoundationReader mp3 = new MediaFoundationReader(Convert.ToString(checklistSavepresets.SelectedItem) + "\\" + title + ".mp3"))
+                    {
+                        using (WaveStream pcm = WaveFormatConversionStream.CreatePcmStream(mp3))
+                        {
+                            WaveFileWriter.CreateWaveFile(Convert.ToString(checklistSavepresets.SelectedItem) + "\\" + title + ".wav", pcm);
+                        }
+                    }
+                    File.Delete(Convert.ToString(checklistSavepresets.SelectedItem) + "\\" + title + ".mp3");
+
+                    ConvUsespreset = true;
+                    Filepath = Convert.ToString(checklistSavepresets.SelectedItem);
+                    ConvTitle = title;
+                    Thread OGGconversionThread = new Thread(OGGConversion);
+                    OGGconversionThread.Start();
+
+
+                }
+                progBarVisible = false;
+                return;
             }
             else
             {
                 checkSaveInprogramfolder.Checked = true;
             }
-            progressBarDownload.Visible = false;
+
+
+            progBarVisible = false;
         }
 
         // Returns normal BackColor to element
@@ -461,15 +698,10 @@ namespace Amyntas__YT_Downloader
             txtCustomfilename.BackColor = Color.FromArgb(255, 90, 90, 90);
         }
 
-        // Returns normal BackColor to element
-        private void txtURL_Click(object sender, EventArgs e)
-        {
-            txtURL.BackColor = Color.FromArgb(255, 90, 90, 90);
-        }
-
         // Attempts to insert copied URL into URL-textbox
         private void btnPaste_Click(object sender, EventArgs e)
         {
+            txtURL.BackColor = Color.FromArgb(255, 90, 90, 90);
             lblError.Text = "";
             try
             {
@@ -556,5 +788,69 @@ namespace Amyntas__YT_Downloader
             RewriteConfigfile();
         }
         //
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (progBarVisible)
+            {
+                progressBarDownload.Visible = true;
+            }
+            else
+            {
+                progressBarDownload.Visible = false;
+            }
+
+            if (errortext != "")
+            {
+                lblError.Text = errortext;
+                errortext = "";
+            }
+
+            if (progBarWEE)
+            {
+                progressBarDownload.Style = ProgressBarStyle.Marquee;
+            }
+            else
+            {
+                progressBarDownload.Style = ProgressBarStyle.Blocks;
+            }
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+        }
+
+        private void checkFormatMP3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkFormatMP3.Checked)
+            {
+                checkFormatWAV.Checked = false;
+                checkFormatOGG.Checked = false;
+                configFormatoption = "1";
+                RewriteConfigfile();
+            }
+        }
+
+        private void checkFormatWAV_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkFormatWAV.Checked)
+            {
+                checkFormatMP3.Checked = false;
+                checkFormatOGG.Checked = false;
+                configFormatoption = "2";
+                RewriteConfigfile();
+            }
+        }
+
+        private void checkFormatOGG_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkFormatOGG.Checked)
+            {
+                checkFormatWAV.Checked = false;
+                checkFormatMP3.Checked = false;
+                configFormatoption = "3";
+                RewriteConfigfile();
+            }
+        }
     }
 }

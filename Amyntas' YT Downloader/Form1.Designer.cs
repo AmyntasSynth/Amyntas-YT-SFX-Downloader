@@ -28,9 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabDownloader = new System.Windows.Forms.TabPage();
+            this.checkFormatOGG = new System.Windows.Forms.CheckBox();
+            this.checkFormatWAV = new System.Windows.Forms.CheckBox();
+            this.checkFormatMP3 = new System.Windows.Forms.CheckBox();
+            this.progressBarDownload = new System.Windows.Forms.ProgressBar();
             this.btnPaste = new System.Windows.Forms.Button();
             this.splitter2 = new System.Windows.Forms.Splitter();
             this.checklistSavepresets = new System.Windows.Forms.ListBox();
@@ -61,7 +66,8 @@
             this.btnColOrange = new System.Windows.Forms.Button();
             this.btnColSalmon = new System.Windows.Forms.Button();
             this.btnColWhite = new System.Windows.Forms.Button();
-            this.progressBarDownload = new System.Windows.Forms.ProgressBar();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabDownloader.SuspendLayout();
             this.SuspendLayout();
@@ -78,6 +84,9 @@
             // tabDownloader
             // 
             this.tabDownloader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.tabDownloader.Controls.Add(this.checkFormatOGG);
+            this.tabDownloader.Controls.Add(this.checkFormatWAV);
+            this.tabDownloader.Controls.Add(this.checkFormatMP3);
             this.tabDownloader.Controls.Add(this.progressBarDownload);
             this.tabDownloader.Controls.Add(this.btnPaste);
             this.tabDownloader.Controls.Add(this.splitter2);
@@ -105,6 +114,55 @@
             this.tabDownloader.Size = new System.Drawing.Size(581, 343);
             this.tabDownloader.TabIndex = 0;
             this.tabDownloader.Text = "Downloader";
+            // 
+            // checkFormatOGG
+            // 
+            this.checkFormatOGG.AutoSize = true;
+            this.checkFormatOGG.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.checkFormatOGG.ForeColor = System.Drawing.Color.Violet;
+            this.checkFormatOGG.Location = new System.Drawing.Point(119, 117);
+            this.checkFormatOGG.Name = "checkFormatOGG";
+            this.checkFormatOGG.Size = new System.Drawing.Size(47, 17);
+            this.checkFormatOGG.TabIndex = 35;
+            this.checkFormatOGG.Text = ".ogg";
+            this.checkFormatOGG.UseVisualStyleBackColor = false;
+            this.checkFormatOGG.CheckedChanged += new System.EventHandler(this.checkFormatOGG_CheckedChanged);
+            // 
+            // checkFormatWAV
+            // 
+            this.checkFormatWAV.AutoSize = true;
+            this.checkFormatWAV.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.checkFormatWAV.ForeColor = System.Drawing.Color.Violet;
+            this.checkFormatWAV.Location = new System.Drawing.Point(64, 117);
+            this.checkFormatWAV.Name = "checkFormatWAV";
+            this.checkFormatWAV.Size = new System.Drawing.Size(49, 17);
+            this.checkFormatWAV.TabIndex = 34;
+            this.checkFormatWAV.Text = ".wav";
+            this.checkFormatWAV.UseVisualStyleBackColor = false;
+            this.checkFormatWAV.CheckedChanged += new System.EventHandler(this.checkFormatWAV_CheckedChanged);
+            // 
+            // checkFormatMP3
+            // 
+            this.checkFormatMP3.AutoSize = true;
+            this.checkFormatMP3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.checkFormatMP3.ForeColor = System.Drawing.Color.Violet;
+            this.checkFormatMP3.Location = new System.Drawing.Point(8, 117);
+            this.checkFormatMP3.Name = "checkFormatMP3";
+            this.checkFormatMP3.Size = new System.Drawing.Size(49, 17);
+            this.checkFormatMP3.TabIndex = 33;
+            this.checkFormatMP3.Text = ".mp3";
+            this.checkFormatMP3.UseVisualStyleBackColor = false;
+            this.checkFormatMP3.CheckedChanged += new System.EventHandler(this.checkFormatMP3_CheckedChanged);
+            // 
+            // progressBarDownload
+            // 
+            this.progressBarDownload.Location = new System.Drawing.Point(6, 274);
+            this.progressBarDownload.MarqueeAnimationSpeed = 10;
+            this.progressBarDownload.Name = "progressBarDownload";
+            this.progressBarDownload.Size = new System.Drawing.Size(192, 23);
+            this.progressBarDownload.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressBarDownload.TabIndex = 32;
+            this.progressBarDownload.Visible = false;
             // 
             // btnPaste
             // 
@@ -141,9 +199,9 @@
             // 
             this.lblError.AutoEllipsis = true;
             this.lblError.ForeColor = System.Drawing.Color.LightCoral;
-            this.lblError.Location = new System.Drawing.Point(8, 114);
+            this.lblError.Location = new System.Drawing.Point(6, 137);
             this.lblError.Name = "lblError";
-            this.lblError.Size = new System.Drawing.Size(192, 157);
+            this.lblError.Size = new System.Drawing.Size(192, 134);
             this.lblError.TabIndex = 27;
             // 
             // txtCustomfilename
@@ -264,7 +322,6 @@
             this.txtURL.Name = "txtURL";
             this.txtURL.Size = new System.Drawing.Size(155, 20);
             this.txtURL.TabIndex = 9;
-            this.txtURL.Click += new System.EventHandler(this.txtURL_Click);
             this.txtURL.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtURL_MouseDown);
             // 
             // label2
@@ -426,15 +483,15 @@
             this.btnColWhite.UseVisualStyleBackColor = false;
             this.btnColWhite.Click += new System.EventHandler(this.btnColWhite_Click);
             // 
-            // progressBarDownload
+            // timer1
             // 
-            this.progressBarDownload.Location = new System.Drawing.Point(6, 274);
-            this.progressBarDownload.MarqueeAnimationSpeed = 10;
-            this.progressBarDownload.Name = "progressBarDownload";
-            this.progressBarDownload.Size = new System.Drawing.Size(192, 23);
-            this.progressBarDownload.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.progressBarDownload.TabIndex = 32;
-            this.progressBarDownload.Visible = false;
+            this.timer1.Enabled = true;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // timer2
+            // 
+            this.timer2.Interval = 1;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
             // Form1
             // 
@@ -457,7 +514,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "Amyntas\' YT SFX Downloader -- 1.1";
+            this.Text = "Amyntas\' YT SFX Downloader -- 1.2";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabDownloader.ResumeLayout(false);
@@ -501,6 +558,11 @@
         private System.Windows.Forms.Button btnColSalmon;
         private System.Windows.Forms.Button btnColWhite;
         private System.Windows.Forms.ProgressBar progressBarDownload;
+        private System.Windows.Forms.CheckBox checkFormatOGG;
+        private System.Windows.Forms.CheckBox checkFormatWAV;
+        private System.Windows.Forms.CheckBox checkFormatMP3;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer timer2;
     }
 }
 
